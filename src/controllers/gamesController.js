@@ -21,3 +21,21 @@ export async function  postGames(req, res){
         res.sendStatus(500);
     }
 }
+
+export async function getGames(req, res) {
+    const {name} = req.query;
+
+    let like = "%";
+
+    if(name) {
+        like = name+like;
+    }
+    try {
+        const games = await db.query(`SELECT games.*, categories.name as "categoryName" FROM games JOIN categories ON games."categoryId"=categories.id WHERE LOWER(games.name) LIKE $1`, [like]);
+        res.send(games.rows).status(200);
+    } 
+    catch (e) {
+        console.log(e);
+        res.sendStatus(500);
+    }
+}
