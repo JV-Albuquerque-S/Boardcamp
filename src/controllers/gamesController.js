@@ -1,6 +1,6 @@
 import db from "../db.js";
 
-export async function  postGames(req, res){
+export async function postGames(req, res){
     const {name, image, stockTotal, categoryId, pricePerDay} = req.body;
     try{
         const categoryExist = await db.query(`SELECT * FROM categories WHERE id=$1`, [categoryId]);
@@ -22,16 +22,15 @@ export async function  postGames(req, res){
     }
 }
 
-export async function getGames(req, res) {
+export async function getGames(req, res){
     const {name} = req.query;
-
-    let like = "%";
-
+    let filter = "%";
     if(name) {
-        like = name+like;
+        filter = name+filter;
     }
+    
     try {
-        const games = await db.query(`SELECT games.*, categories.name as "categoryName" FROM games JOIN categories ON games."categoryId"=categories.id WHERE LOWER(games.name) LIKE $1`, [like]);
+        const games = await db.query(`SELECT games.*, categories.name as "categoryName" FROM games JOIN categories ON games."categoryId"=categories.id WHERE LOWER(games.name) LIKE $1`, [filter]);
         res.send(games.rows).status(200);
     } 
     catch (e) {
